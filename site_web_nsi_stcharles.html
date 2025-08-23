@@ -30,6 +30,9 @@
   async function renderDir(container, path="") {
     const items = await fetchDir(path);
     items.forEach(item => {
+      if (item.name === ".github" || item.name === ".gitignore") {
+      return; // on saute
+      }
       const li = document.createElement("li");
       const link = document.createElement("a");
       link.textContent = item.name;
