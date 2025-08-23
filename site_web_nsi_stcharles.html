@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Explorateur PDF sur GitHub</title>
+  <style>
+    body { font-family: sans-serif; background:#f8fafc; }
+    ul { list-style: none; padding-left: 1rem; }
+    a { text-decoration: none; color: #2563eb; cursor: pointer; }
+    .files { display: none; margin-left: 1.5rem; }
+    .files li { margin: 2px 0; }
+  </style>
+</head>
+<body>
+  <h1>PDF du dépôt GitHub</h1>
+  <ul id="dirs"></ul>
+
+<script>
+  const user = "micollet";        // <-- ton utilisateur GitHub
+  const repo = "nsi_stcharles";    // <-- ton repo GitHub
+  const branch = "main";         // <-- ta branche (souvent main ou master)
+  const rootPath = "";           // <-- chemin de départ dans le repo (vide = racine)
+
+  async function fetchDir(path="") {
+    const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}?ref=${branch}`;
+    const resp = await fetch(url);
+    return resp.json();
+  }
+
+  async function renderDir(container, path="") {
+    const items = await fetchDir(path);
+    items.forEach(item => {
+      const li = document.createElement("li");
+      const link = document.createElement("a");
+      link.textContent = item.name;
+
+      if (item.type === "dir") {
+        link.href = "#";
+        const ulFiles = document.createElement("ul");
+        ulFiles.className = "files";
+
+        link.addEventListener("click", async e => {
+          e.preventDefault();
+          if (ulFiles.childElementCount === 0) {
+            await renderDir(ulFiles, item.path);
+          }
+          ulFiles.style.display = (ulFiles.style.display === "none" || ulFiles.style.display === "")
+            ? "block"
+            : "none";
+        });
+
+        li.appendChild(link);
+        li.appendChild(ulFiles);
+      } else if (item.name.toLowerCase().endsWith(".pdf")) {
+        // lien direct vers le fichier brut (raw.githubusercontent)
+        const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${item.path}`;
+        link.href = rawUrl;
+        link.target = "_blank";
+        li.appendChild(link);
+      }
+      container.appendChild(li);
+    });
+  }
+
+  renderDir(document.getElementById("dirs"), rootPath);
+</script>
+</body>
+</html>
