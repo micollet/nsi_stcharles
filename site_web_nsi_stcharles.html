@@ -51,6 +51,7 @@
 
       if (item.type === "dir") {
         link.href = "#";
+         link.className = "dir-link";   // style dossier
         const ulFiles = document.createElement("ul");
         ulFiles.className = "files";
 
@@ -71,6 +72,7 @@
         const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${item.path}`;
         link.href = rawUrl;
         link.target = "_blank";
+        link.className = "pdf-link";   // style PDF
         li.appendChild(link);
       }
       container.appendChild(li);
