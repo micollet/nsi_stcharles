@@ -20,6 +20,7 @@
   .dir-link { color: #2563eb; font-weight: bold; }  /* bleu */
   .pdf-link { color: #AC3E41; }                     /* rouge */
   .py-link { color: #00C086; }                     /* vert emeraude */
+  .png-link { color: #8035C5; }                     /* violet */
   .files { display: none; margin-left: 1.5rem; }
   .files li { margin: 2px 0; }
 </style>
@@ -81,6 +82,13 @@
         link.href = rawUrl;
         link.target = "_blank";
         link.className = "py-link";   // style fichier python
+        li.appendChild(link);
+      } else if (item.name.toLowerCase().endsWith(".png")){
+        // lien direct vers le fichier brut (raw.githubusercontent)
+        const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${item.path}`;
+        link.href = rawUrl;
+        link.target = "_blank";
+        link.className = "png-link";   // style fichier png
         li.appendChild(link);
       }
       container.appendChild(li);
